@@ -1,0 +1,15 @@
+*.class
+docroot/WEB-INF/classes
+.classpath
+.settings
+.project
+docroot/WEB-INF/lib/taskmanager-portlet-service.jar
+docroot/WEB-INF/src/service.properties
+.externalToolBuilders
+.sass-cache
+.tern-project
+.svn
+docroot/WEB-INF/service/com/pmc/model
+docroot/WEB-INF/service/com/pmc/service
+docroot/WEB-INF/service/com/pmc/*.java
+docroot/WEB-INF/sql
