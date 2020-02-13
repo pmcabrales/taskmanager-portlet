@@ -43,9 +43,13 @@
 					</c:choose>	
 				</aui:a>		
 			</liferay-ui:search-container-column-text>
-			<liferay-ui:search-container-column-text name="task.name" cssClass="${accomplishedClass}">
-				${task.name}		
-			</liferay-ui:search-container-column-text>		
+			<liferay-ui:search-container-column-text name="task.name" cssClass="${accomplishedClass}">			
+				${task.name}
+				<liferay-ui:icon image="view" message="description" url="javascript:${renderResponse.getNamespace()}showDescription(description_${task.taskId });"/>
+				<div class="popup" id="description_${task.taskId}" onClick="javascript:${renderResponse.getNamespace()}showDescription(description_${task.taskId });">
+				  <span class="popuptext" id="myPopup">${task.description}</span>
+				</div>  
+			</liferay-ui:search-container-column-text>	
 			<liferay-ui:search-container-column-text name="task.priority" cssClass="${accomplishedClass}">
 				<%=Priority.priority[task.getPriority()] %>
 			</liferay-ui:search-container-column-text>		
@@ -82,5 +86,9 @@
 		}else{
 			self.focus(); 
 		}
+	}
+	
+	function <portlet:namespace />showDescription(elem) {	
+		elem.classList.toggle("show");		
 	}
 </script>
