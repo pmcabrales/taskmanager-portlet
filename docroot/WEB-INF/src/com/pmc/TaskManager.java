@@ -102,13 +102,13 @@ public class TaskManager extends MVCPortlet {
 			}
 			@SuppressWarnings("unchecked")
 			List<Task> tasks = TaskLocalServiceUtil.dynamicQuery(taskQuery);		
-			
-			int total = TaskLocalServiceUtil.getTasksCount();
-						
-			searchContainer.setTotal(total);
-			searchContainer.setResults(tasks);
+		
+			searchContainer.setTotal(tasks.size());		
+			int max = (searchContainer.getEnd() > tasks.size())?tasks.size():searchContainer.getEnd();		
+			searchContainer.setResults(tasks.subList(searchContainer.getStart(), max));			
 			searchContainer.setOrderByCol(orderByCol);
 			searchContainer.setOrderByType(orderByType);
+			
 		} catch (SystemException e) {
 			log.error(e);
 		}
