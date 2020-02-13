@@ -50,10 +50,10 @@
 				  <span class="popuptext" id="myPopup">${task.description}</span>
 				</div>  
 			</liferay-ui:search-container-column-text>	
-			<liferay-ui:search-container-column-text name="task.priority" cssClass="${accomplishedClass}">
+			<liferay-ui:search-container-column-text name="task.priority" orderable="true" orderableProperty="task.priority" cssClass="${accomplishedClass}">
 				<%=Priority.priority[task.getPriority()] %>
 			</liferay-ui:search-container-column-text>		
-			<liferay-ui:search-container-column-text name="task.dueDate" cssClass="${accomplishedClass}">
+			<liferay-ui:search-container-column-text name="task.dueDate" orderable="true" orderableProperty="task.dueDate" cssClass="${accomplishedClass}">
 				${task.dueDate}
 			</liferay-ui:search-container-column-text>		
 			<liferay-ui:search-container-column-text name="task.actions" cssClass="${accomplishedClass}">

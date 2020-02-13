@@ -25,6 +25,12 @@
 		<column name="priority" type="int" />
 		<column name="dueDate" type="Date" />		
 
+		<!-- Order -->
+		
+		<order by="asc">
+			<order-column name="priority"></order-column>
+		</order>
+
 		<!-- Finder methods -->
 
 		<finder name="accomplished" return-type="Collection">

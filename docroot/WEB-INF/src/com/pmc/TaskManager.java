@@ -16,11 +16,16 @@ import javax.portlet.ProcessAction;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
 
+import com.liferay.portal.kernel.dao.orm.DynamicQuery;
+import com.liferay.portal.kernel.dao.orm.DynamicQueryFactoryUtil;
+import com.liferay.portal.kernel.dao.orm.Order;
+import com.liferay.portal.kernel.dao.orm.OrderFactoryUtil;
 import com.liferay.portal.kernel.dao.search.SearchContainer;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.portlet.PortletClassLoaderUtil;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.servlet.SessionMessages;
 import com.liferay.portal.kernel.util.ParamUtil;
@@ -75,16 +80,35 @@ public class TaskManager extends MVCPortlet {
 
 		log.debug("::showViewDefault::");
 	
+		String orderByCol = ParamUtil.getString(renderRequest, SearchContainer.DEFAULT_ORDER_BY_COL_PARAM, "");
+		String orderByType = ParamUtil.getString(renderRequest, SearchContainer.DEFAULT_ORDER_BY_TYPE_PARAM, "");
+		if(orderByType == null  || orderByType.equals("")){orderByType = "asc";}
+		
 		SearchContainer<Task> searchContainer = new SearchContainer<>(renderRequest, null, null, SearchContainer.DEFAULT_CUR_PARAM, 
 				ParamUtil.getInteger(renderRequest, SearchContainer.DEFAULT_DELTA_PARAM,SearchContainer.DEFAULT_DELTA), renderResponse.createRenderURL(), 
 				null, "there-are-no-results");
 		
 		try {
-			List<Task> tasks = TaskLocalServiceUtil.getTasks(searchContainer.getStart(), searchContainer.getEnd());
-			int total = TaskLocalServiceUtil.getTasksCount();
+			log.debug("orderType: " + orderByType);
+			log.debug("orderCol: " + orderByCol);
+		
+			DynamicQuery taskQuery = DynamicQueryFactoryUtil.forClass(Task.class, "task", PortletClassLoaderUtil.getClassLoader());
+
+			if(orderByCol != null && !"".equals(orderByCol)){
+				Order order = (orderByType.equalsIgnoreCase("asc"))?OrderFactoryUtil.asc(orderByCol):OrderFactoryUtil.desc(orderByCol);
+				taskQuery.addOrder(order);			
+			}else{
+				taskQuery.addOrder(OrderFactoryUtil.asc("task.dueDate"));		
+			}
+			@SuppressWarnings("unchecked")
+			List<Task> tasks = TaskLocalServiceUtil.dynamicQuery(taskQuery);		
 			
+			int total = TaskLocalServiceUtil.getTasksCount();
+						
 			searchContainer.setTotal(total);
 			searchContainer.setResults(tasks);
+			searchContainer.setOrderByCol(orderByCol);
+			searchContainer.setOrderByType(orderByType);
 		} catch (SystemException e) {
 			log.error(e);
 		}

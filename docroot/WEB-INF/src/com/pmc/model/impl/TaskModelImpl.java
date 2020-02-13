@@ -73,6 +73,8 @@ public class TaskModelImpl extends BaseModelImpl<Task> implements TaskModel {
 		};
 	public static final String TABLE_SQL_CREATE = "create table tm_Task (taskId LONG not null primary key,companyId LONG,userId LONG,createDate DATE null,modifiedDate DATE null,name VARCHAR(75) null,description VARCHAR(2000) null,accomplished BOOLEAN,priority INTEGER,dueDate DATE null)";
 	public static final String TABLE_SQL_DROP = "drop table tm_Task";
+	public static final String ORDER_BY_JPQL = " ORDER BY task.priority ASC";
+	public static final String ORDER_BY_SQL = " ORDER BY tm_Task.priority ASC";
 	public static final String DATA_SOURCE = "liferayDataSource";
 	public static final String SESSION_FACTORY = "liferaySessionFactory";
 	public static final String TX_MANAGER = "liferayTransactionManager";
@@ -310,6 +312,8 @@ public class TaskModelImpl extends BaseModelImpl<Task> implements TaskModel {
 	}
 
 	public void setPriority(int priority) {
+		_columnBitmask = -1L;
+
 		_priority = priority;
 	}
 
@@ -370,17 +374,23 @@ public class TaskModelImpl extends BaseModelImpl<Task> implements TaskModel {
 	}
 
 	public int compareTo(Task task) {
-		long primaryKey = task.getPrimaryKey();
+		int value = 0;
 
-		if (getPrimaryKey() < primaryKey) {
-			return -1;
+		if (getPriority() < task.getPriority()) {
+			value = -1;
 		}
-		else if (getPrimaryKey() > primaryKey) {
-			return 1;
+		else if (getPriority() > task.getPriority()) {
+			value = 1;
 		}
 		else {
-			return 0;
+			value = 0;
 		}
+
+		if (value != 0) {
+			return value;
+		}
+
+		return 0;
 	}
 
 	@Override

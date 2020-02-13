@@ -78,4 +78,5 @@ public class TaskLocalServiceImpl extends TaskLocalServiceBaseImpl {
 		
 		return taskPersistence.update(task, true);
 	}
+		
 }
